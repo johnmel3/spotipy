@@ -29,7 +29,7 @@ to get the credentials necessary to make authorized calls
 
 *Spotipy* supports two authorization flows:
 
-  - The **Authorization Code flow** This method is suitable for long-running applications
+  - **Authorization Code flow** This method is suitable for long-running applications
     which the user logs into once. It provides a refreshable access token. This method involves sending
     your secret key, so perform this on a secure location, like a backend service, and not from a client such as a
     browser or from a mobile app.
@@ -38,7 +38,7 @@ to get the credentials necessary to make authorized calls
               `My Dashboard <https://developer.spotify.com/dashboard/applications>`_.
               See `Redirect URI`_ for more details.
 
-  - The **Client Credentials flow**  Ideal for server-to-server authentication where user data is not required.
+  - **Client Credentials flow** This method is ideal for server-to-server authentication where user data is not required.
     Only endpoints that do not access user information can be accessed. The advantage here in comparison with
     requests to the Web API made without an access token, is that a higher rate limit is applied.
 
@@ -47,8 +47,8 @@ Setting Environment Variables
 -----------------------------
 
 You can set your app credentials in your source code or use environment variables.
-For environment variables, use the following commands (on Windows replace `export` with
-`$env:"VARIABLE_NAME"`):
+For environment variables, use the following commands (on Windows replace ``export`` with
+``$env:"VARIABLE_NAME"``)::
 
     export SPOTIPY_CLIENT_ID='your-spotify-client-id'
     export SPOTIPY_CLIENT_SECRET='your-spotify-client-secret'
