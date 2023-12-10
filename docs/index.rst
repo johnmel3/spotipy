@@ -8,11 +8,72 @@ Welcome to Spotipy!
 <https://developer.spotify.com/documentation/web-api/>`_. With *Spotipy*
 you get full access to all of the music data provided by the Spotify platform.
 
-First, ensure that you have set the ``SPOTIPY_CLIENT_ID`` and ``SPOTIPY_CLIENT_SECRET``
-environment variables. For guidance on how to do this, watch this `video tutorial <https://youtu.be/kaBVN8uP358>`_
-or follow this `Spotipy Tutorial for Beginners <https://github.com/spotipy-dev/spotipy/blob/2.22.1/TUTORIAL.md>`_.
 
-For a longer tutorial with examples included, refer to this `video playlist <https://www.youtube.com/watch?v=tmt5SdvTqUI&list=PLqgOPibB_QnzzcaOFYmY2cQjs35y0is9N&index=1>`_. Below is a quick example of using *Spotipy* to list the
+Installation
+============
+
+Install or upgrade *Spotipy* with::
+
+    pip install spotipy --upgrade
+
+You can also obtain the source code from the `Spotipy GitHub repository <https://github.com/plamere/spotipy>`_. 
+
+
+Setting Up Your Environment
+===========================
+
+All methods require user authorization. You will need to register your app at 
+`My Dashboard <https://developer.spotify.com/dashboard/applications>`_ 
+to get the credentials necessary to make authorized calls
+(a *client id* and *client secret*).
+
+*Spotipy* supports two authorization flows:
+
+  - The **Authorization Code flow** This method is suitable for long-running applications
+    which the user logs into once. It provides a refreshable access token. This method involves sending
+    your secret key, so perform this on a secure location, like a backend service, and not from a client such as a
+    browser or from a mobile app.
+
+    .. note:: Requires you to add a redirect URI to your application at 
+              `My Dashboard <https://developer.spotify.com/dashboard/applications>`_.
+              See `Redirect URI`_ for more details.
+
+  - The **Client Credentials flow**  Ideal for server-to-server authentication where user data is not required.
+    Only endpoints that do not access user information can be accessed. The advantage here in comparison with
+    requests to the Web API made without an access token, is that a higher rate limit is applied.
+
+
+Setting Environment Variables
+-----------------------------
+
+You can set your app credentials in your source code or use environment variables.
+For environment variables, use the following commands (on Windows replace `export` with
+`$env:"VARIABLE_NAME"`):
+
+    export SPOTIPY_CLIENT_ID='your-spotify-client-id'
+    export SPOTIPY_CLIENT_SECRET='your-spotify-client-secret'
+    export SPOTIPY_REDIRECT_URI='your-app-redirect-url' # Only for Authorization Code Flow
+
+
+For additional guidance on setting ``SPOTIPY_CLIENT_ID`` and ``SPOTIPY_CLIENT_SECRET`` watch this
+`video tutorial <https://youtu.be/kaBVN8uP358>`_ or follow this 
+`Spotipy Tutorial for Beginners <https://github.com/spotipy-dev/spotipy/blob/2.22.1/TUTORIAL.md>`_.
+
+For a longer tutorial with examples included, refer to this `video playlist <https://www.youtube.com/watch?v=tmt5SdvTqUI&list=PLqgOPibB_QnzzcaOFYmY2cQjs35y0is9N&index=1>`_. 
+
+
+Features
+========
+
+*Spotipy* provides full supoort for all features of the Spotify Web API, including access
+to all endpoints and user authorization. For detailed capabilities, review the
+`Spotify Web API documentation <https://developer.spotify.com/documentation/web-api/>`_.
+
+
+Getting Started with Examples
+-----------------------------
+
+Below is a quick example of using *Spotipy* to list the
 names of all the albums released by the artist 'Birdy'::
 
     import spotipy
@@ -50,97 +111,12 @@ for the top 10 tracks for Led Zeppelin::
 Finally, here's an example that will get the URL for an artist image given the
 artist's name::
 
-    import spotipy
-    import sys
-    from spotipy.oauth2 import SpotifyClientCredentials
 
-    spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
+Further Details on Authorization Flows, Scopes, and Redirect URI
+================================================================
 
-    if len(sys.argv) > 1:
-        name = ' '.join(sys.argv[1:])
-    else:
-        name = 'Radiohead'
-
-    results = spotify.search(q='artist:' + name, type='artist')
-    items = results['artists']['items']
-    if len(items) > 0:
-        artist = items[0]
-        print(artist['name'], artist['images'][0]['url'])
-
-
-Features
-========
-
-*Spotipy* supports all of the features of the Spotify Web API including access
-to all end points, and support for user authorization. For details on the
-capabilities you are encouraged to review the `Spotify Web
-API <https://developer.spotify.com/documentation/web-api/>`_ documentation.
-
-Installation
-============
-
-Install or upgrade *Spotipy* with::
-
-    pip install spotipy --upgrade
-
-Or you can get the source from github at https://github.com/plamere/spotipy
-
-Getting Started
-===============
-
-All methods require user authorization. You will need to register your app at 
-`My Dashboard <https://developer.spotify.com/dashboard/applications>`_ 
-to get the credentials necessary to make authorized calls
-(a *client id* and *client secret*).
-
-*Spotipy* supports two authorization flows:
-
-  - The **Authorization Code flow** This method is suitable for long-running applications
-    which the user logs into once. It provides an access token that can be refreshed.
-
-    .. note:: Requires you to add a redirect URI to your application at 
-              `My Dashboard <https://developer.spotify.com/dashboard/applications>`_.
-              See `Redirect URI`_ for more details.
-
-  - The **Client Credentials flow**  The method makes it possible
-    to authenticate your requests to the Spotify Web API and to obtain
-    a higher rate limit than you would with the Authorization Code flow.
-
-
-Authorization Code Flow
-=======================
-
-This flow is suitable for long-running applications in which the user grants
-permission only once. It provides an access token that can be refreshed.
-Since the token exchange involves sending your secret key, perform this on a
-secure location, like a backend service, and not from a client such as a
-browser or from a mobile app.
-
-Quick start
------------
-
-To support the **Client Authorization Code Flow** *Spotipy* provides a
-class SpotifyOAuth that can be used to authenticate requests like so::
-
-    import spotipy
-    from spotipy.oauth2 import SpotifyOAuth
-
-    scope = "user-library-read"
-
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
-
-    results = sp.current_user_saved_tracks()
-    for idx, item in enumerate(results['items']):
-        track = item['track']
-        print(idx, track['artists'][0]['name'], " – ", track['name'])
-
-or if you are reluctant to immortalize your app credentials in your source code,
-you can set environment variables like so (use ``$env:"credentials"`` instead of ``export``
-on Windows)::
-
-    export SPOTIPY_CLIENT_ID='your-spotify-client-id'
-    export SPOTIPY_CLIENT_SECRET='your-spotify-client-secret'
-    export SPOTIPY_REDIRECT_URI='your-app-redirect-url'
+For more information on the specifics of the Authorization Code Flow,
+Client Credentials Flow, using scopes, and setting up a Redirect URI, refer to the corresponding sections below.
 
 Scopes
 ------
@@ -152,7 +128,7 @@ about scopes.
 Redirect URI
 ------------
 
-The **Authorization Code Flow** needs you to add a **redirect URI**
+Required for **Authorization Code Flow**. A **redirect URI** is added
 to your application at 
 `My Dashboard <https://developer.spotify.com/dashboard/applications>`_
 (navigate to your application and then *[Edit Settings]*).
@@ -168,41 +144,7 @@ such as ``http://example.com``, ``http://localhost`` or ``http://127.0.0.1:9090`
       response at the end of the oauth flow [see the code](https://github.com/plamere/spotipy/blob/master/spotipy/oauth2.py#L483-L490).
 
 
-Client Credentials Flow
-=======================
-
-The Client Credentials flow is used in server-to-server authentication. Only
-endpoints that do not access user information can be accessed. The advantage here
-in comparison with requests to the Web API made without an access token,
-is that a higher rate limit is applied.
-
-As opposed to the Authorization Code Flow, you will not need to set ``SPOTIPY_REDIRECT_URI``,
-which means you will never be redirected to the sign in page in your browser::
-
-    export SPOTIPY_CLIENT_ID='your-spotify-client-id'
-    export SPOTIPY_CLIENT_SECRET='your-spotify-client-secret'
-
-To support the **Client Credentials Flow** *Spotipy* provides a
-class SpotifyClientCredentials that can be used to authenticate requests like so::
-
-
-    import spotipy
-    from spotipy.oauth2 import SpotifyClientCredentials
-
-    auth_manager = SpotifyClientCredentials()
-    sp = spotipy.Spotify(auth_manager=auth_manager)
-
-    playlists = sp.user_playlists('spotify')
-    while playlists:
-        for i, playlist in enumerate(playlists['items']):
-            print("%4d %s %s" % (i + 1 + playlists['offset'], playlist['uri'],  playlist['name']))
-        if playlists['next']:
-            playlists = sp.next(playlists)
-        else:
-            playlists = None
-
-
-IDs URIs and URLs
+IDs, URIs, and URLs
 =================
 
 *Spotipy* supports a number of different ID types:
@@ -221,7 +163,7 @@ In general, any *Spotipy* method that needs an artist, album, track or playlist 
 will accept ids in any of the above form
 
 
-Customized token caching
+Customized Token Caching
 ========================
 
 Tokens are refreshed automatically and stored by default in the project main folder.
